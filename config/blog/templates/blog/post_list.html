@@ -1,0 +1,45 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Home | Django Blog{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <p><a href="{% url 'post_create' %}">+ New Post</a></p>
+{% endif %}
+
+<h1>Django Backend Blog</h1>
+
+{% for post in page_obj %}
+    <div class="post">
+        <h2>
+            <a href="{% url 'post_detail' post.id %}">
+                {{ post.title }}
+            </a>
+        </h2>
+
+        {% if post.image %}
+            <img src="{{ post.image.url }}" style="width:100%; max-height:300px; object-fit:cover;">
+        {% endif %}
+
+        <p>{{ post.content|truncatewords:40 }}</p>
+        <small>Published on {{ post.created_at }}</small>
+        <hr>
+    </div>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+
+{% endblock %}
